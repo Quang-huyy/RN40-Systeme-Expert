@@ -1,0 +1,184 @@
+﻿void afficherListeProposition(listeProposition l)
+Données: listeProposition l
+resultat: affichage des propositions
+
+tanque nonVide(l)
+    print(tete(l))
+    l = suc(l)
+fintanque
+
+
+void afficherRegle(listeRegle r)
+Données: ListRegle r
+resultat: affichage de regle r
+
+Si nonVide(r)
+    afficherListeProposition(r->premisse)
+    print(r->conclusion)
+finsi
+
+listeRegle creerListeRegle()
+donnee:
+resultat: regle vide
+
+listeRegle l = creer()
+creerListeRegle() = l;
+
+listeProposition creerListeProposition()
+Données: 
+resultat: proposition vide
+listeProposition l= creer()
+return l
+
+listeProposition ajouterPropositionQ(listeProposition l, char propo)
+Données: listeProposition l, char propositions
+resultat: listeProposition l
+
+listeProposition k = l
+listeProposition temp = creerListeProposition()
+tete(temp) = propo
+Si Vide(k)
+    ajouterPropositionQ(l,propo) = temp;
+Sinon 
+    tanque nonVide(suc(k))
+        k = suc(k)
+    fintanque
+    suc(k) = temp
+    ajouterPropositionQ(l,propo) = k;
+finsi
+
+void ajouterConclusionRegle(char c, listeRegle l)
+Données: regle r, char c
+resultat: regle r 
+
+Si nonVide(l)
+    l->conclusion = c;
+finsi
+
+
+bool testProposition(listeProposition l, char propo)
+Données: listeproposition l , char proposition
+resultat: bool vrai ou faux 
+
+Si vide(l)
+    testProposition(l,propo) = faux
+Sinon 
+    Si tete(l) == propo
+    testProposition(l,propo) = vrai
+    Sinon
+        testProposition(suc(l), propo)
+    finsi
+finsi
+
+listeProposition supprimerProposition(listeProposition l, char propo)
+Données: listeproposition l, char propo;
+resultat: listeproposition l ;
+
+Si vide(l)
+     supprimerProposition(l, propo) = l
+
+Si tete(l) == propo
+    listeProposition temp = l;
+    l=suc(l)
+    free(temp);
+    supprimerProposition(l, propo) = l
+tanque tete(suc(l)) != propo and suc(l) !=NULL
+    l = suc(l)
+fintanque
+Si nonVide(suc(l))
+    listeProposition temp = suc(suc(l))
+    free(suc(l))
+    l->next = temp;
+finsi
+supprimerProposition(l, propo) = l
+
+bool testRegleVide(listeProposition l)
+Données: listeproposition l;
+resultat: bool vrai ou faux
+
+Si Vide(l)
+    testRegleVide(l)= vrai;
+finsi
+testRegleVide(l)= faux;
+
+
+char accederTeteListeProposition(listeRegle l)
+Données: listeregle l;
+resultat: proposition au tete;
+
+Si vide(l)
+    accederTeteListeProposition(l) = ‘\0'
+finsi
+accederTeteListeProposition(listeRegle l)= l->premisse->caractere.
+
+
+
+
+char accederConclusion(listeRegle l)
+Données: listeregle l ;
+resultat: conclusion de la regle;
+Si vide(l) 
+    accederConclusion (l) = '\0'
+finsi
+accederConclusion (l) = l->conclusion
+
+listeBaseDeConnaissance creerBaseDeConnaisance()
+Données:
+resultat: basedeconnaissance vide;
+
+listeBaseDeConnaissance l = creer()
+creerBaseDeConnaisance() = l
+
+listeBaseDeConnaissance ajouterRegleQ(listeBaseDeConnaissance l, listeRegle r)
+listeBaseDeConnaissance k = l;
+listeBaseDeConnaissance temp = creerBaseDeConnaisance();
+temp->regle = r;
+Si vide(l);
+    ajouterRegleQ(l, r) = l;
+Sinon
+    tanque nonVide(suc(k))
+        k = suc(k)
+    fintanque
+    k->next = temp;
+    ajouterRegleQ(l, r) = l;
+finsi
+
+listeBaseDeConnaissance PremiereRegle(listeBaseDeConnaissance l)
+Données: listeBaseDeConnaissance l;
+resultat: premiere regle de la base de listeBaseDeConnaissance
+Si vide(l)
+    PremiereRegle(l) = l
+Sinon
+        PremiereRegle(l) = l->regle;
+finsi
+
+listeProposition moteurInference(listeBaseDeConnaissance l, listeProposition baseDeFait) 
+Données:listeBaseDeConnaissance l, listeproposition basedefait;
+resultat: listeproposition conclusion
+
+listeproposition resultat = NULL
+tanque nonVide(baseDeFait)
+    listeBaseDeConnaissance bdc = l;
+    tanque nonVide(bdc)
+        Si bdc->regle != NULL
+            listeproposition temp = bdc->regle->premisse;
+            bool trouve = fasle;
+            tanque(temp!=NULL and trouve)
+                Si testProposition(temp,basedefait->Caractere)
+                    trouve = true;
+                    bdc->regle->premisse = supprimerProposition(bdc->regle->premisse, baseDeFait->caractere)
+                    Si testRegleVide(bdc->regle->premisse)
+                        resultat = ajouterPropositionQ(resultat, bdc->Regle->conclusion)
+                        basedefait = ajouterPropositionQ(basedefait,bdc->Regle->conclusion)
+                    finsi
+                finsi
+            fintanque
+        Sinon
+            temp = suc(temp)
+        finsi
+        bdc = suc(bdc);
+    fintanque
+    baseDeFait = supprimerProposition(baseDeFait, baseDeFait->caractere);
+fintanque
+
+moteurInference(l, baseDeFait) = resultat
